@@ -33,10 +33,23 @@ class HomeController extends AbstractController
     */
     public function hello(Request $request, $name){
 
+        // explain different between createForm and createFormBuilder
+        $form = $this->createFormBuilder()
+                    ->add('Fullname')
+                    ->getForm();
+
         // $name = $request->get('name');
+        $person = [
+            'name' => 'Hamza',
+            'lastname' => 'bedoui',
+            'age' => 40
+        ];
 
         return $this->render('home/greet.html.twig', [
-            'name' => $name
+            // 'name' => $name,
+            'person' => $person,
+            'user_form' => $form->createView()
+
         ]);
     }
 }
