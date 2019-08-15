@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Post;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -44,10 +45,21 @@ class HomeController extends AbstractController
             'lastname' => 'bedoui',
             'age' => 40
         ];
+        ///////////////////////////////
+        // store stuf in the database//
+        ///////////////////////////////
+        $post = new Post();
+        $post->setTitle("hamza b")
+            ->setDescription('description de hamza b a lire');
+        $em = $this->getDoctrine()->getManager();
+        $reteivedPost = $em->getRepository(Post::class)->findAll();
+        $em->persist($post);
+        // $em->flush();
 
         return $this->render('home/greet.html.twig', [
             // 'name' => $name,
             'person' => $person,
+            'posts' => $reteivedPost,
             'user_form' => $form->createView()
 
         ]);

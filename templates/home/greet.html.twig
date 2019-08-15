@@ -15,4 +15,13 @@ age {{ person.age }}
 
 {{ form_end(user_form) }}
 
+<h1>
+render the post 
+</h1>
+ {% for post in posts %}
+<h3> {{ post.title }} </h3>
+<hr>
+<p> {{ post.description }} </p>
+{% endfor %}
+
 {% endblock %}
