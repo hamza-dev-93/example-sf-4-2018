@@ -1,10 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Category index{% endblock %}
+{% block title %}Category index
+{% endblock %}
 
 {% block body %}
     <h1>Category index</h1>
-
+    {% for message in app.flashes('info') %}
+        <div class="alert alert-success">{{ message }}
+        </div>
+    {% endfor %}
     <table class="table">
         <thead>
             <tr>
@@ -15,21 +19,21 @@
             </tr>
         </thead>
         <tbody>
-        {% for category in categories %}
-            <tr>
-                <td>{{ category.id }}</td>
-                <td>{{ category.name }}</td>
-                <td>{{ category.slug }}</td>
-                <td>
-                    <a type="button" class="btn btn-info" href="{{ path('category_show', {'id': category.id}) }}">show</a>
-                    <a  type="button" class="btn btn-primary" href="{{ path('category_edit', {'id': category.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
-        {% endfor %}
+            {% for category in categories %}
+                <tr>
+                    <td>{{ category.id }}</td>
+                    <td>{{ category.name }}</td>
+                    <td>{{ category.slug }}</td>
+                    <td>
+                        <a type="button" class="btn btn-info" href="{{ path('category_show', {'id': category.id}) }}">show</a>
+                        <a type="button" class="btn btn-primary" href="{{ path('category_edit', {'id': category.id}) }}">edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">no records found</td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 
