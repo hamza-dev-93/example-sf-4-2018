@@ -4,11 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Post;
 use App\Form\PostType;
+use App\Services\Fetcher;
+use App\Services\Paginator;
 use App\Repository\PostRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/post")
@@ -35,6 +37,22 @@ class PostController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $files = $request->files->get('post')['my_files'];
+            $uploads_directory = $this->getParameter('uploads_directory');
+            foreach ($files as $key => $file) {
+                # code...
+                $filename = md5(uniqid ()).'.'.$file->guessExtension() ;
+                $file->move(
+                    $uploads_directory,
+                    $filename
+                );
+            }
+            // echo "<pre>";
+            // var_dump($file);
+            // die();
+            // echo "<\pre>";
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($post);
             $entityManager->flush();
@@ -43,8 +61,53 @@ class PostController extends AbstractController
         }
 
         return $this->render('post/new.html.twig', [
-            'post' => $post,
+            'post' => $post,            
             'form' => $form->createView(),
+        ]);
+    }
+
+
+    /**
+     * @Route("/upload", name="post_upload", methods={"GET","POST"})
+     */
+    public function upload(Request $request, Fetcher $fetcher, Paginator $page): Response
+    {
+        //URL : https://api.coinmarketcap.com/v2/listings/
+        $post = new Post();
+        $form = $this->createForm(PostType::class, $post);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $files = $request->files->get('post')['my_files'];
+            $uploads_directory = $this->getParameter('uploads_directory');
+            foreach ($files as $key => $file) {
+                # code...
+                $filename = md5(uniqid ()).'.'.$file->guessExtension() ;
+                $file->move(
+                    $uploads_directory,
+                    $filename
+                );
+            }
+            // echo "<pre>";
+            // var_dump($file);
+            // die();
+            // echo "<\pre>";
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($post);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('post_upload');
+        }
+        $result = $fetcher->get('https://api.coinmarketcap.com/v2/listings/');
+        $partialArrau = $page->getPartiel($result['data'], 10, 10);
+
+        return $this->render('post/new.html.twig', [
+            'post' => $post,
+            'getData' => $partialArrau,
+            'img' => '5179ab66488ec722113a2f9ad853d099.png',         
+            'form' => $form->createView()
         ]);
     }
 
@@ -55,6 +118,7 @@ class PostController extends AbstractController
     {
         return $this->render('post/show.html.twig', [
             'post' => $post,
+            'img' => '5179ab66488ec722113a2f9ad853d099.png'
         ]);
     }
 
