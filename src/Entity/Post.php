@@ -26,10 +26,36 @@ class Post
      */
     private $description;
 
+    
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="post")
      */
     private $category;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\SubCategory", inversedBy="post")
+     */
+    private $subCategory;
+
+     /**
+     * Get the value of sub_category
+     */ 
+    public function getSubCategory(): ? SubCategory
+    {
+        return $this->subCategory;
+    }
+
+    /**
+     * Set the value of sub_category
+     *
+     * @return  self
+     */ 
+    public function setSubCategory(SubCategory $subCategory): self
+    {
+        $this->subCategory = $subCategory;
+
+        return $this;
+    }
 
     public function getId(): ?int
     {
